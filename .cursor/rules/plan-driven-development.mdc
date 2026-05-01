@@ -1,0 +1,26 @@
+---
+description: 分阶段开发：按 DEVELOPMENT_PLAN 推进，单 Plan 小切片
+alwaysApply: true
+---
+
+# Plan 模式开发（本项目）
+
+## 必读
+
+启动实现或重构前浏览：
+
+- `docs/DEVELOPMENT_PLAN.md`（阶段 A→F、验收勾选）
+- `docs/VISION_CONSTRAINTS.md`（非官方、AI 边界、域名 canonical）
+
+## 执行约定
+
+1. **范围**：单次任务优先完成 PLAN 里**当前阶段的一处切片**（如 A4），避免跨阶段大杂烩。
+2. **闸门**：未达到 `DEVELOPMENT_PLAN.md` 中该切片**验收标准**前，不默认进入下一阶段核心功能（可在 PR/说明里列出待办）。
+3. **AI 与互动**：**禁止**实现「AI 生成假评论/假用户」以抬热度；FAQ/编者摘要须可标注为非 UGC。
+4. **SEO**：不向 `sitemap` 提交未人审、无独立价值的 URL；卫星域与旗舰**禁止**重复同一全文索引；用 `canonical`/`hreflang` 表达关系。
+5. **代码风格**：与仓库已有约定一致；无约定时 TypeScript 严格、早失败、少无关重构。
+
+## Plan 输出建议（人类/Agent 写计划时）
+
+- 写明：阶段字母、切片编号、**文件/模块清单**、**验收标准引用**（DEVELOPMENT_PLAN checkbox）。
+- 风险：若牵扯商标素材或全文转载，备注「产品与法务待复核」而非直接落地高风险文案。

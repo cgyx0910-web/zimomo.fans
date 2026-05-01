@@ -1,0 +1,42 @@
+{
+  "name": "guge",
+  "private": true,
+  "packageManager": "pnpm@9.15.4",
+  "devDependencies": {
+    "tsx": "^4.21.0"
+  },
+  "scripts": {
+    "dev": "pnpm --filter web dev",
+    "build": "pnpm --filter web build",
+    "verify:a": "node ./scripts/verify-phase-a.mjs",
+    "verify:b1": "node ./scripts/verify-phase-b1.mjs",
+    "verify:b2": "node ./scripts/verify-phase-b2.mjs",
+    "verify:b3": "node ./scripts/verify-phase-b3.mjs",
+    "verify:b4": "node ./scripts/verify-phase-b4.mjs",
+    "verify:c1": "node ./scripts/verify-phase-c1.mjs",
+    "verify:c2": "node ./scripts/verify-phase-c2.mjs",
+    "verify:c3": "node ./scripts/verify-phase-c3.mjs",
+    "verify:c4": "node ./scripts/verify-phase-c4.mjs",
+    "verify:d1": "node ./scripts/verify-phase-d1.mjs",
+    "verify:d2": "node ./scripts/verify-phase-d2.mjs",
+    "verify:d3": "node ./scripts/verify-phase-d3.mjs",
+    "verify:e1": "node ./scripts/verify-phase-e1.mjs",
+    "verify:e2": "node ./scripts/verify-phase-e2.mjs",
+    "verify:e3": "node ./scripts/verify-phase-e3.mjs",
+    "verify:e4": "node ./scripts/verify-phase-e4.mjs",
+    "verify:e": "pnpm verify:e1 && pnpm verify:e2 && pnpm verify:e3 && pnpm verify:e4",
+    "verify:f1": "node ./scripts/verify-phase-f1.mjs",
+    "verify:f2": "node ./scripts/verify-phase-f2.mjs",
+    "verify:f3": "node ./scripts/verify-phase-f3.mjs",
+    "verify:f4": "node ./scripts/verify-phase-f4.mjs",
+    "verify:f5": "node ./scripts/verify-phase-f5.mjs",
+    "f5:smoke": "node ./scripts/f5-rate-limit-smoke.mjs",
+    "lint": "pnpm --filter web lint",
+    "start": "pnpm --filter web start",
+    "db:generate": "pnpm --filter @guge/db db:generate",
+    "db:migrate": "pnpm --filter @guge/db migrate",
+    "db:push": "pnpm --filter @guge/db db:push",
+    "db:studio": "pnpm --filter @guge/db studio",
+    "db:ping": "pnpm --filter @guge/db ping"
+  }
+}

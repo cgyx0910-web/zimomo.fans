@@ -1,0 +1,132 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1777613198510,
+      "tag": "0000_colossal_microchip",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1777614000000,
+      "tag": "0001_groovy_sources",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1777615200000,
+      "tag": "0002_b2_raw_documents",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1777616100000,
+      "tag": "0003_b3_content_items",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1777617000000,
+      "tag": "0004_stage_b_hardening",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1777618000000,
+      "tag": "0005_c1_story_clusters",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1777619000000,
+      "tag": "0006_c2_content_signals",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1777620000000,
+      "tag": "0007_c4_cluster_published_article",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1777621000000,
+      "tag": "0008_c_polish_constraints",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1777622000000,
+      "tag": "0009_d2_article_enrich_draft",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1777623000000,
+      "tag": "0010_d3_article_status",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1777624000000,
+      "tag": "0011_quality_gate_override_audit",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1777624471171,
+      "tag": "0012_nifty_roxanne_simpson",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1777624830337,
+      "tag": "0013_secret_ben_parker",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1777625078429,
+      "tag": "0014_adorable_korg",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1777626263518,
+      "tag": "0015_quiet_leopardon",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1777626450579,
+      "tag": "0016_medical_triathlon",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1777628998007,
+      "tag": "0017_late_dark_phoenix",
+      "breakpoints": true
+    }
+  ]
+}
