@@ -6,6 +6,7 @@ import {
   pgTable,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
 
@@ -49,7 +50,9 @@ export const articles = pgTable(
   "articles",
   {
     id: uuid("id").defaultRandom().primaryKey(),
-    slug: text("slug").notNull().unique(),
+    slug: text("slug").notNull(),
+    /** 内容语言；同一 slug 可在不同 locale 各有一条（如 zh-CN / en） */
+    locale: text("locale").notNull().default("zh-CN"),
     title: text("title"),
     excerpt: text("excerpt"),
     body: text("body"),
@@ -76,6 +79,7 @@ export const articles = pgTable(
       .$onUpdate(() => new Date()),
   },
   (table) => [
+    uniqueIndex("articles_slug_locale_uidx").on(table.slug, table.locale),
     index("articles_status_published_at_idx").on(
       table.status,
       desc(table.publishedAt)

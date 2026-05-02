@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { assertAdminSession } from "@/lib/auth/session";
+import { revalidateArticlePublicPaths } from "@/lib/i18n/revalidate-public";
 import { updateArticleCommentStatus } from "@/lib/comments/queries";
 
 const decisionSchema = z.enum(["approve", "reject"]);
@@ -36,7 +37,7 @@ export async function moderateArticleCommentAction(
   });
 
   if (slugRow && nextStatus === "approved") {
-    revalidatePath(`/articles/${slugRow.articleSlug}`);
+    revalidateArticlePublicPaths(slugRow.articleSlug);
   }
   revalidatePath("/admin/comments");
 }

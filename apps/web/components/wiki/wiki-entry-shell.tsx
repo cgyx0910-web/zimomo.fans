@@ -1,5 +1,8 @@
 import Link from "next/link";
 
+import type { AppLocale } from "@/lib/i18n/config";
+import { localePath } from "@/lib/i18n/paths";
+
 import { AdSlot } from "@/components/ads/ad-slot";
 import { AffiliateDisclosureShort } from "@/components/ads/affiliate-disclosure-short";
 import { EditorialFaq } from "@/components/faq/editorial-faq";
@@ -7,6 +10,7 @@ import { buildFaqPageJsonLd } from "@/lib/faq/faq-page-json-ld";
 import type { EditorialFaqItem } from "@/lib/faq/editorial-faq";
 
 type WikiEntryShellProps = {
+  locale: AppLocale;
   slug: string;
   title: string;
   subtitle: string | null;
@@ -36,16 +40,24 @@ function formatLastUpdated(value: Date | string): string {
 
 /** 阶段 E2：百科条目统一版式（面包屑、徽章、导语、正文、来源与 Last updated） */
 export function WikiEntryShell(props: WikiEntryShellProps) {
+  const faqLang = props.locale === "en" ? "en" : "zh-CN";
   const faqJsonLd =
     props.editorialFaqItems.length > 0 ?
-      buildFaqPageJsonLd(props.pageAbsoluteUrl, props.editorialFaqItems)
+      buildFaqPageJsonLd(
+        props.pageAbsoluteUrl,
+        props.editorialFaqItems,
+        faqLang
+      )
     : null;
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-4 py-14">
       <header className="space-y-5 border-b border-neutral-200 pb-8 dark:border-neutral-800">
         <nav aria-label="层级" className="text-sm text-neutral-600 dark:text-neutral-400">
-          <Link className="underline hover:text-neutral-900 dark:hover:text-neutral-100" href="/wiki">
+          <Link
+            className="underline hover:text-neutral-900 dark:hover:text-neutral-100"
+            href={localePath(props.locale, "/wiki")}
+          >
             百科
           </Link>
           <span className="mx-2 text-neutral-400">/</span>
@@ -131,7 +143,7 @@ export function WikiEntryShell(props: WikiEntryShellProps) {
             {formatLastUpdated(props.updatedAt)}
           </time>
         </span>
-        <Link className="underline" href="/wiki">
+        <Link className="underline" href={localePath(props.locale, "/wiki")}>
           返回百科索引
         </Link>
       </footer>

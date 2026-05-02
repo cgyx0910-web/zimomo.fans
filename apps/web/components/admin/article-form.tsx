@@ -16,6 +16,7 @@ import {
 
 export type ArticleFormValues = {
   slug: string;
+  locale: "zh-CN" | "en";
   title: string;
   excerpt: string;
   body: string;
@@ -32,6 +33,7 @@ export type ArticleFormValues = {
 
 export const emptyArticleDefaults: ArticleFormValues = {
   slug: "",
+  locale: "zh-CN",
   title: "",
   excerpt: "",
   body: "",
@@ -71,7 +73,11 @@ function Feedback({ state }: { state: ArticleActionState | null }) {
   );
 }
 
-function Fields({ defaults }: { defaults: ArticleFormValues }) {
+function Fields(props: {
+  defaults: ArticleFormValues;
+  lockLocale?: boolean;
+}) {
+  const { defaults, lockLocale } = props;
   return (
     <div className="grid gap-4 md:grid-cols-2">
       <label className="flex flex-col gap-1 md:col-span-2">
@@ -89,6 +95,24 @@ function Fields({ defaults }: { defaults: ArticleFormValues }) {
           小写字母、数字与中划线。
         </span>
       </label>
+
+      {lockLocale ?
+        <input name="locale" type="hidden" value={defaults.locale} />
+      : <label className="flex flex-col gap-1">
+          <span className="text-sm font-medium">语言 / locale</span>
+          <select
+            className="rounded-md border border-neutral-300 px-3 py-2 dark:border-neutral-700"
+            defaultValue={defaults.locale}
+            name="locale"
+          >
+            <option value="zh-CN">zh-CN（中文）</option>
+            <option value="en">en（English）</option>
+          </select>
+          <span className="text-xs text-neutral-500">
+            同一 slug 可各语言一篇；创建后不可在此修改语言（需另建条目）。
+          </span>
+        </label>
+      }
 
       <label className="flex flex-col gap-1 md:col-span-2">
         <span className="text-sm font-medium">标题</span>
@@ -165,7 +189,7 @@ function Fields({ defaults }: { defaults: ArticleFormValues }) {
           className="rounded-md border border-neutral-300 px-3 py-2 dark:border-neutral-700"
           name="canonical_url"
           defaultValue={defaults.canonicalUrl}
-          placeholder="https://zimomo.fans/articles/..."
+          placeholder="https://zimomo.fans/zh-CN/articles/..."
         />
       </label>
 
@@ -312,7 +336,7 @@ export function EditArticleForm(props: {
   return (
     <form action={action} className="space-y-6">
       <Feedback state={state} />
-      <Fields defaults={props.defaults} />
+      <Fields defaults={props.defaults} lockLocale />
 
       <div className="flex flex-wrap gap-3">
         <button

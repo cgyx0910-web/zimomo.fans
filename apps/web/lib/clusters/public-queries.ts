@@ -22,6 +22,7 @@ export type MergedClusterPublicMember = {
 
 export type MergedClusterPublishedArticle = {
   slug: string;
+  locale: string;
   canonicalUrl: string | null;
   title: string | null;
   status: ArticleWorkflowStatus;
@@ -52,6 +53,7 @@ export async function getMergedClusterBySlug(slug: string): Promise<MergedCluste
       publishedArticleId: storyClusters.publishedArticleId,
       updatedAt: storyClusters.updatedAt,
       pubSlug: articles.slug,
+      pubLocale: articles.locale,
       pubCanonicalUrl: articles.canonicalUrl,
       pubTitle: articles.title,
       pubStatus: articles.status,
@@ -93,6 +95,7 @@ export async function getMergedClusterBySlug(slug: string): Promise<MergedCluste
     row.publishedArticleId && row.pubSlug && row.pubStatus ?
       {
         slug: row.pubSlug,
+        locale: row.pubLocale ?? "zh-CN",
         canonicalUrl: row.pubCanonicalUrl,
         title: row.pubTitle,
         status: row.pubStatus,

@@ -17,8 +17,10 @@ import { padEditorialFaqSlotsForForm } from "@/lib/faq/editorial-faq";
 type ArticleRow = InferSelectModel<typeof articles>;
 
 function toFormDefaults(row: ArticleRow, tagSlugs: string[]): ArticleFormValues {
+  const loc = row.locale === "en" ? "en" : "zh-CN";
   return {
     slug: row.slug,
+    locale: loc,
     title: row.title ?? "",
     excerpt: row.excerpt ?? "",
     body: row.body ?? "",

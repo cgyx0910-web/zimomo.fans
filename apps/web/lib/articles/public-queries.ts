@@ -4,28 +4,47 @@ import { articleTags, articles, tags } from "@guge/db/schema";
 import { getDb } from "@guge/db";
 
 /** 仅访客可见的 `published` 条目，按「发布时间优先、否则更新时间」倒序 */
-export async function listPublishedArticles() {
+export async function listPublishedArticles(locale: string) {
   const db = getDb();
   const sortKey = sql`COALESCE(${articles.publishedAt}, ${articles.updatedAt})`;
 
   return db
     .select()
     .from(articles)
-    .where(eq(articles.status, "published"))
+    .where(
+      and(eq(articles.status, "published"), eq(articles.locale, locale))
+    )
     .orderBy(desc(sortKey));
 }
 
-export async function getPublishedArticleBySlug(slug: string) {
+export async function getPublishedArticleBySlug(slug: string, locale: string) {
   const db = getDb();
   const rows = await db
     .select()
     .from(articles)
     .where(
-      and(eq(articles.status, "published"), eq(articles.slug, slug))
+      and(
+        eq(articles.status, "published"),
+        eq(articles.slug, slug),
+        eq(articles.locale, locale)
+      )
     )
     .limit(1);
 
   return rows[0] ?? null;
+}
+
+/** 同一 slug 已发布语言列表（用于 hreflang） */
+export async function listPublishedLocalesForArticleSlug(
+  slug: string
+): Promise<string[]> {
+  const db = getDb();
+  const rows = await db
+    .select({ locale: articles.locale })
+    .from(articles)
+    .where(and(eq(articles.status, "published"), eq(articles.slug, slug)));
+
+  return rows.map((r) => r.locale);
 }
 
 export async function listTagSlugsByArticleId(articleId: string): Promise<string[]> {

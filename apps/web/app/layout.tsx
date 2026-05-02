@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { headers } from "next/headers";
 
 import { getSiteOrigin } from "@/lib/articles/site";
-import { SiteFooter } from "@/components/site/site-footer";
+import { defaultLocale, htmlLangForLocale, isAppLocale } from "@/lib/i18n/config";
+import type { AppLocale } from "@/lib/i18n/config";
 import { isPublicIndexingEnabled } from "@/lib/seo/indexable";
 import { getSiteVerificationMetadata } from "@/lib/seo/site-verification";
 
@@ -42,20 +44,21 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const h = await headers();
+  const raw = h.get("x-guge-locale") ?? defaultLocale;
+  const locale: AppLocale = isAppLocale(raw) ? raw : defaultLocale;
+
   return (
     <html
-      lang="zh-CN"
+      lang={htmlLangForLocale(locale)}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col">
-        <div className="flex flex-1 flex-col">{children}</div>
-        <SiteFooter />
-      </body>
+      <body className="flex min-h-full flex-col">{children}</body>
     </html>
   );
 }

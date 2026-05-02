@@ -4,17 +4,23 @@ import { ArticleCommentComposer } from "@/components/comments/article-comment-co
 import { ArticleCommentList } from "@/components/comments/article-comment-list";
 import { getCurrentUser } from "@/lib/auth/user-session";
 import { listApprovedCommentsForArticle } from "@/lib/comments/queries";
+import type { AppLocale } from "@/lib/i18n/config";
+import { localePath } from "@/lib/i18n/paths";
 
 export async function ArticleCommentsSection(props: {
   articleId: string;
   articleSlug: string;
+  articleLocale: AppLocale;
 }) {
   const [user, comments] = await Promise.all([
     getCurrentUser(),
     listApprovedCommentsForArticle(props.articleId),
   ]);
 
-  const loginNextPath = `/articles/${props.articleSlug}`;
+  const loginNextPath = localePath(
+    props.articleLocale,
+    `/articles/${props.articleSlug}`
+  );
 
   return (
     <section
@@ -26,7 +32,10 @@ export async function ArticleCommentsSection(props: {
       </h2>
       <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
         仅展示<strong>已通过人工审核</strong>的评论；内容由{" "}
-        <Link className="underline" href="/account/register">
+        <Link
+          className="underline"
+          href={localePath(props.articleLocale, "/account/register")}
+        >
           注册用户
         </Link>{" "}
         发表，不使用 AI 伪造评论。
@@ -34,6 +43,7 @@ export async function ArticleCommentsSection(props: {
 
       <div className="mt-6">
         <ArticleCommentComposer
+          articleLocale={props.articleLocale}
           articleSlug={props.articleSlug}
           isLoggedIn={Boolean(user)}
           loginNextPath={loginNextPath}

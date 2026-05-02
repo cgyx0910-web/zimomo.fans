@@ -6,7 +6,8 @@ import { getDb } from "@guge/db";
 /** 与时间区间相交且已发布的活动（starts < rangeEnd AND ends > rangeStart） */
 export async function listPublishedCalendarEventsOverlappingRange(
   rangeStart: Date,
-  rangeEnd: Date
+  rangeEnd: Date,
+  locale: string
 ) {
   const db = getDb();
   return db
@@ -15,6 +16,7 @@ export async function listPublishedCalendarEventsOverlappingRange(
     .where(
       and(
         eq(calendarEvents.status, "published"),
+        eq(calendarEvents.locale, locale),
         lt(calendarEvents.startsAt, rangeEnd),
         gt(calendarEvents.endsAt, rangeStart)
       )
@@ -22,7 +24,10 @@ export async function listPublishedCalendarEventsOverlappingRange(
     .orderBy(asc(calendarEvents.startsAt));
 }
 
-export async function getPublishedCalendarEventBySlug(slug: string) {
+export async function getPublishedCalendarEventBySlug(
+  slug: string,
+  locale: string
+) {
   const db = getDb();
   const rows = await db
     .select()
@@ -30,7 +35,8 @@ export async function getPublishedCalendarEventBySlug(slug: string) {
     .where(
       and(
         eq(calendarEvents.slug, slug),
-        eq(calendarEvents.status, "published")
+        eq(calendarEvents.status, "published"),
+        eq(calendarEvents.locale, locale)
       )
     )
     .limit(1);
@@ -43,6 +49,7 @@ export async function listPublishedCalendarEventsForSitemap(limit = 500) {
   return db
     .select({
       slug: calendarEvents.slug,
+      locale: calendarEvents.locale,
       updatedAt: calendarEvents.updatedAt,
     })
     .from(calendarEvents)
@@ -54,7 +61,8 @@ export async function listPublishedCalendarEventsForSitemap(limit = 500) {
 /** ICS：与区间相交的 `published` 条目 */
 export async function listPublishedCalendarEventsOverlappingRangeForFeed(
   rangeStart: Date,
-  rangeEnd: Date
+  rangeEnd: Date,
+  locale: string
 ) {
   const db = getDb();
   return db
@@ -63,6 +71,7 @@ export async function listPublishedCalendarEventsOverlappingRangeForFeed(
     .where(
       and(
         eq(calendarEvents.status, "published"),
+        eq(calendarEvents.locale, locale),
         lt(calendarEvents.startsAt, rangeEnd),
         gt(calendarEvents.endsAt, rangeStart)
       )

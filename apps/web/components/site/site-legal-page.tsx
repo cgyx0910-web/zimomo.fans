@@ -1,6 +1,9 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 
+import type { AppLocale } from "@/lib/i18n/config";
+import { localePath } from "@/lib/i18n/paths";
+
 export function LegalDraftBanner() {
   return (
     <aside
@@ -45,20 +48,34 @@ export function BilingualSection(props: {
   );
 }
 
-export function SiteLegalPage(props: { title: string; children: ReactNode }) {
+export function SiteLegalPage(props: {
+  title: string;
+  locale: AppLocale;
+  children: ReactNode;
+}) {
+  const { locale } = props;
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 py-12 md:py-16">
       <nav
         aria-label="站内导航"
         className="mb-8 flex flex-wrap gap-x-4 gap-y-2 text-sm text-neutral-600 dark:text-neutral-400"
       >
-        <Link className="underline hover:text-neutral-900 dark:hover:text-neutral-100" href="/">
+        <Link
+          className="underline hover:text-neutral-900 dark:hover:text-neutral-100"
+          href={localePath(locale, "/")}
+        >
           首页
         </Link>
-        <Link className="underline hover:text-neutral-900 dark:hover:text-neutral-100" href="/articles">
+        <Link
+          className="underline hover:text-neutral-900 dark:hover:text-neutral-100"
+          href={localePath(locale, "/articles")}
+        >
           资讯
         </Link>
-        <Link className="underline hover:text-neutral-900 dark:hover:text-neutral-100" href="/disclaimer">
+        <Link
+          className="underline hover:text-neutral-900 dark:hover:text-neutral-100"
+          href={localePath(locale, "/disclaimer")}
+        >
           免责声明
         </Link>
       </nav>

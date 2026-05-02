@@ -25,6 +25,10 @@ import {
   slugSchema,
 } from "@/lib/articles/validation";
 import { assertAdminSession } from "@/lib/auth/session";
+import {
+  revalidateCalendarFeedPath,
+  revalidateCalendarPublicPaths,
+} from "@/lib/i18n/revalidate-public";
 
 export type CalendarEventActionState =
   | { error?: undefined; fieldErrors?: undefined }
@@ -167,9 +171,8 @@ function parseCalendarBasics(formData: FormData) {
 
 function revalidateCalendarPaths(slug: string) {
   revalidatePath("/admin/calendar-events");
-  revalidatePath("/calendar");
-  revalidatePath(`/calendar/${slug}`);
-  revalidatePath("/calendar/feed");
+  revalidateCalendarPublicPaths(slug);
+  revalidateCalendarFeedPath();
   revalidatePath("/sitemap.xml");
 }
 
@@ -309,7 +312,7 @@ export async function updateCalendarEventAction(
 
   const oldSlug = prevRow.slug;
   if (oldSlug !== parsed.slug) {
-    revalidatePath(`/calendar/${oldSlug}`);
+    revalidateCalendarPublicPaths(oldSlug);
   }
 
   return {};

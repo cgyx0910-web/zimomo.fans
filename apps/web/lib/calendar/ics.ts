@@ -3,6 +3,8 @@ import type { InferSelectModel } from "drizzle-orm";
 import { calendarEvents } from "@guge/db/schema";
 
 import { absoluteCalendarEventUrl, getSiteOrigin } from "@/lib/articles/site";
+import type { AppLocale } from "@/lib/i18n/config";
+import { defaultLocale } from "@/lib/i18n/config";
 
 export type CalendarEventIcsRow = InferSelectModel<typeof calendarEvents>;
 
@@ -81,7 +83,10 @@ function buildUid(slug: string): string {
   return `${slug}@${host}`;
 }
 
-export function buildIcsCalendarDocument(rows: CalendarEventIcsRow[]): string {
+export function buildIcsCalendarDocument(
+  rows: CalendarEventIcsRow[],
+  locale: AppLocale = defaultLocale
+): string {
   const lines: string[] = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
@@ -113,7 +118,7 @@ export function buildIcsCalendarDocument(rows: CalendarEventIcsRow[]): string {
 
     lines.push(foldLine(`SUMMARY:${escapeText(row.title)}`));
 
-    const detailUrl = absoluteCalendarEventUrl(row.slug);
+    const detailUrl = absoluteCalendarEventUrl(row.slug, locale);
     const descParts = [row.lead.trim(), `详情 ${detailUrl}`];
     const desc = escapeText(descParts.filter(Boolean).join("\\n"));
 

@@ -10,6 +10,7 @@ import {
 } from "@/lib/comments/spam";
 import {
   articleCommentBodySchema,
+  articleCommentLocaleSchema,
   articleCommentSlugSchema,
 } from "@/lib/comments/validation";
 import { getPublishedArticleBySlug } from "@/lib/articles/public-queries";
@@ -47,6 +48,15 @@ export async function submitArticleCommentAction(
     };
   }
 
+  const localeParsed = articleCommentLocaleSchema.safeParse(
+    formData.get("articleLocale")
+  );
+  if (!localeParsed.success) {
+    return {
+      error: localeParsed.error.flatten().formErrors[0] ?? "语言参数无效。",
+    };
+  }
+
   const bodyParsed = articleCommentBodySchema.safeParse(formData.get("body"));
   if (!bodyParsed.success) {
     return {
@@ -72,7 +82,10 @@ export async function submitArticleCommentAction(
 
   let article;
   try {
-    article = await getPublishedArticleBySlug(slugParsed.data);
+    article = await getPublishedArticleBySlug(
+      slugParsed.data,
+      localeParsed.data
+    );
   } catch {
     return { error: "暂无法发表评论。" };
   }

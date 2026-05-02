@@ -22,6 +22,7 @@ import type { ArticleWorkflowStatus } from "@/lib/articles/workflow";
 import { parseArticleWorkflowStatusFromForm } from "@/lib/articles/workflow";
 import { parseEditorialFaqFromFormData } from "@/lib/faq/editorial-faq";
 import { appendQualityGateOverrideEvent, runArticlePublishQualityGate } from "@/lib/quality-gate";
+import { revalidateArticlePublicPaths } from "@/lib/i18n/revalidate-public";
 
 export type ArticleActionState =
   | { error?: undefined; fieldErrors?: undefined }
@@ -49,8 +50,11 @@ function isPgUniqueViolation(error: unknown): boolean {
   return walk(error);
 }
 
+const articleLocaleSchema = z.enum(["zh-CN", "en"]);
+
 type ParsedBasics = {
   slug: string;
+  locale: z.infer<typeof articleLocaleSchema>;
   title: string | null;
   excerpt: string | null;
   body: string | null;
@@ -122,6 +126,9 @@ async function syncArticleTags(
 function parseDraft(formData: FormData): Omit<ParsedBasics, "editorialFaq"> {
   return {
     slug: slugSchema.parse(String(formData.get("slug") ?? "")),
+    locale: articleLocaleSchema.parse(
+      String(formData.get("locale") ?? "zh-CN").trim() || "zh-CN"
+    ),
     title: optionalText.parse(formData.get("title")),
     excerpt: optionalText.parse(formData.get("excerpt")),
     body: optionalText.parse(formData.get("body")),
@@ -137,6 +144,9 @@ function parseDraft(formData: FormData): Omit<ParsedBasics, "editorialFaq"> {
 function parsePublished(formData: FormData): Omit<ParsedBasics, "editorialFaq"> {
   return {
     slug: slugSchema.parse(String(formData.get("slug") ?? "")),
+    locale: articleLocaleSchema.parse(
+      String(formData.get("locale") ?? "zh-CN").trim() || "zh-CN"
+    ),
     title: requiredText.parse(String(formData.get("title") ?? "")),
     excerpt: optionalText.parse(formData.get("excerpt")),
     body: requiredText.parse(String(formData.get("body") ?? "")),
@@ -225,6 +235,7 @@ export async function createArticleAction(
       .insert(articles)
       .values({
         slug: parsed.slug,
+        locale: parsed.locale,
         title: parsed.title,
         excerpt: parsed.excerpt,
         body: parsed.body,
@@ -242,7 +253,7 @@ export async function createArticleAction(
     newId = inserted[0]?.id;
   } catch (e: unknown) {
     if (isPgUniqueViolation(e)) {
-      return { error: "slug 已被占用，请换一个。" };
+      return { error: "该 slug 在当前语言版本中已存在，请更换 slug 或语言。" };
     }
     console.error(e);
     return { error: "保存失败，请稍后重试。" };
@@ -268,8 +279,7 @@ export async function createArticleAction(
   }
 
   revalidatePath("/admin");
-  revalidatePath("/articles");
-  revalidatePath(`/articles/${parsed.slug}`);
+  revalidateArticlePublicPaths(parsed.slug);
   if (status === "published") {
     revalidatePath("/sitemap.xml");
   }
@@ -363,7 +373,7 @@ export async function updateArticleAction(
       .where(eq(articles.id, articleId));
   } catch (e: unknown) {
     if (isPgUniqueViolation(e)) {
-      return { error: "slug 已被占用，请换一个。" };
+      return { error: "该 slug 在当前语言版本中已存在，请更换 slug 或语言。" };
     }
     console.error(e);
     return { error: "保存失败，请稍后重试。" };
@@ -386,10 +396,9 @@ export async function updateArticleAction(
 
   revalidatePath("/admin");
   revalidatePath(`/admin/articles/${articleId}/edit`);
-  revalidatePath("/articles");
-  revalidatePath(`/articles/${parsed.slug}`);
+  revalidateArticlePublicPaths(parsed.slug);
   if (prevRow.slug !== parsed.slug) {
-    revalidatePath(`/articles/${prevRow.slug}`);
+    revalidateArticlePublicPaths(prevRow.slug);
   }
   if (prevRow.status === "published" || status === "published") {
     revalidatePath("/sitemap.xml");

@@ -10,6 +10,8 @@ import { NEWSLETTER_HONEYPOT_FIELD } from "@/lib/newsletter/constants";
 
 export function SubscribeForm(props: {
   defaultEmail?: string | null;
+  /** 本地化隐私页链接（须与当前 locale 一致） */
+  privacyHref: string;
   utmSource?: string;
   utmMedium?: string;
   utmCampaign?: string;
@@ -92,7 +94,7 @@ export function SubscribeForm(props: {
         />
         <span className="text-neutral-700 dark:text-neutral-300">
           我已阅读并同意为完成订阅而处理我的邮箱地址（双 opt-in、可退订），详见
-          <a className="ml-1 underline" href="/privacy">
+          <a className="ml-1 underline" href={props.privacyHref}>
             隐私说明
           </a>
           。

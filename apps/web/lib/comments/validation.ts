@@ -10,3 +10,5 @@ export const articleCommentSlugSchema = z
   .string()
   .trim()
   .min(1, "缺少文章标识。");
+
+export const articleCommentLocaleSchema = z.enum(["zh-CN", "en"]);

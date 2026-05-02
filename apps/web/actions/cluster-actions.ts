@@ -13,6 +13,10 @@ import {
 } from "@guge/db/schema";
 
 import { assertAdminSession } from "@/lib/auth/session";
+import {
+  revalidateArticlePublicPaths,
+  revalidateClusterPublicPath,
+} from "@/lib/i18n/revalidate-public";
 import { runClusterBucketBatch } from "@/lib/clusters/bucket-worker";
 import { searchOrphanContentItemsAdmin } from "@/lib/clusters/queries";
 import { searchArticlesForClusterAdmin } from "@/lib/articles/queries";
@@ -132,7 +136,7 @@ async function revalidateArticlePathsForIds(
       .limit(1);
     const slug = rows[0]?.slug;
     if (slug) {
-      revalidatePath(`/articles/${slug}`);
+      revalidateArticlePublicPaths(slug);
     }
   }
 }
@@ -336,9 +340,9 @@ export async function updateClusterMetaAction(
 
   revalidatePath("/admin/clusters");
   revalidatePath(`/admin/clusters/${clusterId}`);
-  revalidatePath(`/clusters/${prevRow.slug}`);
+  revalidateClusterPublicPath(prevRow.slug);
   if (prevRow.slug !== slug) {
-    revalidatePath(`/clusters/${slug}`);
+    revalidateClusterPublicPath(slug);
   }
   revalidatePath("/sitemap.xml");
   await revalidateArticlePathsForIds(db, [prevPublishedArticleId, publishedArticleId]);
@@ -417,7 +421,7 @@ export async function setClusterPublishedArticleAction(
 
   revalidatePath("/admin/clusters");
   revalidatePath(`/admin/clusters/${clusterId}`);
-  revalidatePath(`/clusters/${prevRow.slug}`);
+  revalidateClusterPublicPath(prevRow.slug);
   revalidatePath("/sitemap.xml");
   await revalidateArticlePathsForIds(db, [prevPublishedArticleId, publishedArticleId]);
 
@@ -608,7 +612,7 @@ export async function removeClusterItemAction(formData: FormData): Promise<Clust
 
   revalidatePath("/admin/clusters");
   revalidatePath(`/admin/clusters/${clusterId}`);
-  revalidatePath(`/clusters/${prevCluster[0].slug}`);
+  revalidateClusterPublicPath(prevCluster[0].slug);
   revalidatePath("/sitemap.xml");
 
   return {};
@@ -660,7 +664,7 @@ export async function setClusterPrimaryAction(formData: FormData): Promise<Clust
 
   revalidatePath("/admin/clusters");
   revalidatePath(`/admin/clusters/${clusterId}`);
-  revalidatePath(`/clusters/${prevCluster[0].slug}`);
+  revalidateClusterPublicPath(prevCluster[0].slug);
   revalidatePath("/sitemap.xml");
 
   return {};

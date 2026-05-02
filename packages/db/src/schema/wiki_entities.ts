@@ -5,6 +5,7 @@ import {
   pgTable,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
 
@@ -27,7 +28,8 @@ export const wikiEntities = pgTable(
   "wiki_entities",
   {
     id: uuid("id").defaultRandom().primaryKey(),
-    slug: text("slug").notNull().unique(),
+    slug: text("slug").notNull(),
+    locale: text("locale").notNull().default("zh-CN"),
     title: text("title").notNull(),
     /** 可选副标题（模板顶部展示），非 SEO 主字段 */
     subtitle: text("subtitle"),
@@ -47,6 +49,7 @@ export const wikiEntities = pgTable(
       .$onUpdate(() => new Date()),
   },
   (table) => [
+    uniqueIndex("wiki_entities_slug_locale_uidx").on(table.slug, table.locale),
     index("wiki_entities_status_updated_at_idx").on(
       table.status,
       table.updatedAt

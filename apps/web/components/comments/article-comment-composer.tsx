@@ -12,6 +12,7 @@ import { COMMENT_HONEYPOT_FIELD } from "@/lib/comments/constants";
 
 export function ArticleCommentComposer(props: {
   articleSlug: string;
+  articleLocale: "zh-CN" | "en";
   isLoggedIn: boolean;
   loginNextPath: string;
 }) {
@@ -25,13 +26,16 @@ export function ArticleCommentComposer(props: {
       <div className="rounded-md border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-200">
         <p>仅<strong>登录用户</strong>可发表评论（实名账户，不使用 AI 代发）。</p>
         <p className="mt-2">
-          <Link className="font-medium underline" href={`/account/login?next=${encodeURIComponent(props.loginNextPath)}`}>
+          <Link
+            className="font-medium underline"
+            href={`/${props.articleLocale}/account/login?next=${encodeURIComponent(props.loginNextPath)}`}
+          >
             前往登录
           </Link>
           <span aria-hidden className="px-2">
             ·
           </span>
-          <Link className="underline" href="/account/register">
+          <Link className="underline" href={`/${props.articleLocale}/account/register`}>
             注册账户
           </Link>
         </p>
@@ -69,6 +73,7 @@ export function ArticleCommentComposer(props: {
   return (
     <form className="relative space-y-4" onSubmit={(e) => void onSubmit(e)}>
       <input name="articleSlug" type="hidden" value={props.articleSlug} />
+      <input name="articleLocale" type="hidden" value={props.articleLocale} />
       {/* 蜜罐：勿删；填入则服务端拒绝 */}
       <div
         aria-hidden

@@ -5,6 +5,7 @@ import {
   pgTable,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
 
@@ -25,7 +26,8 @@ export const calendarEvents = pgTable(
   "calendar_events",
   {
     id: uuid("id").defaultRandom().primaryKey(),
-    slug: text("slug").notNull().unique(),
+    slug: text("slug").notNull(),
+    locale: text("locale").notNull().default("zh-CN"),
     title: text("title").notNull(),
     /** 对外导语（SEO），发布时建议 ≥20 字符，由应用校验 */
     lead: text("lead").notNull(),
@@ -45,6 +47,7 @@ export const calendarEvents = pgTable(
       .$onUpdate(() => new Date()),
   },
   (table) => [
+    uniqueIndex("calendar_events_slug_locale_uidx").on(table.slug, table.locale),
     index("calendar_events_status_starts_at_idx").on(
       table.status,
       table.startsAt

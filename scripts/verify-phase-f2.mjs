@@ -81,7 +81,7 @@ function main() {
   );
 
   assertIncludes(
-    "apps/web/app/articles/[slug]/page.tsx",
+    "apps/web/app/[locale]/articles/[slug]/page.tsx",
     "ArticleCommentsSection",
     "article detail must embed comments section"
   );

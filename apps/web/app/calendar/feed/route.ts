@@ -4,6 +4,7 @@ import {
 } from "@/lib/calendar/constants";
 import { buildIcsCalendarDocument } from "@/lib/calendar/ics";
 import { listPublishedCalendarEventsOverlappingRangeForFeed } from "@/lib/calendar/public-queries";
+import { defaultLocale } from "@/lib/i18n/config";
 
 export async function GET() {
   const now = Date.now();
@@ -21,13 +22,14 @@ export async function GET() {
   try {
     rows = await listPublishedCalendarEventsOverlappingRangeForFeed(
       rangeStart,
-      rangeEnd
+      rangeEnd,
+      defaultLocale
     );
   } catch {
     rows = [];
   }
 
-  const body = buildIcsCalendarDocument(rows);
+  const body = buildIcsCalendarDocument(rows, defaultLocale);
 
   return new Response(body, {
     status: 200,

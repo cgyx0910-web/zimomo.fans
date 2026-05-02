@@ -127,6 +127,13 @@
       "when": 1777628998007,
       "tag": "0017_late_dark_phoenix",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1777708916279,
+      "tag": "0018_wealthy_the_hand",
+      "breakpoints": true
     }
   ]
 }

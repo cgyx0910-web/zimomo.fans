@@ -11,6 +11,21 @@ function unauthorized(message: string): NextResponse {
   return NextResponse.json({ error: message }, { status: 401 });
 }
 
+/** 供外部探测存活；RSS 拉取仅允许 POST + Bearer（cron 应使用 POST） */
+export function GET() {
+  return new NextResponse(null, {
+    status: 405,
+    headers: { Allow: "POST, OPTIONS" },
+  });
+}
+
+export function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: { Allow: "POST, OPTIONS" },
+  });
+}
+
 export async function POST(request: Request) {
   const secret = readSecret();
   if (!secret) {

@@ -18,6 +18,7 @@ import {
 } from "@/lib/articles/validation";
 import { parseEditorialFaqFromFormData } from "@/lib/faq/editorial-faq";
 import { assertAdminSession } from "@/lib/auth/session";
+import { revalidateWikiPublicPaths } from "@/lib/i18n/revalidate-public";
 import {
   WIKI_BODY_MIN_PUBLISHED_LENGTH,
   WIKI_LEAD_MIN_PUBLISHED_LENGTH,
@@ -113,8 +114,7 @@ function parseWikiBasics(formData: FormData): {
 
 function revalidateWikiPaths(slug: string) {
   revalidatePath("/admin/wiki-entities");
-  revalidatePath("/wiki");
-  revalidatePath(`/wiki/${slug}`);
+  revalidateWikiPublicPaths(slug);
   revalidatePath("/sitemap.xml");
 }
 
@@ -252,7 +252,7 @@ export async function updateWikiEntityAction(
 
   const oldSlug = prevRow.slug;
   if (oldSlug !== parsed.slug) {
-    revalidatePath(`/wiki/${oldSlug}`);
+    revalidateWikiPublicPaths(oldSlug);
   }
 
   return {};

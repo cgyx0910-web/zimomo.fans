@@ -5,6 +5,8 @@ import { getSiteOrigin } from "@/lib/articles/site";
 import { listMergedClusterSlugsForSitemap } from "@/lib/clusters/public-queries";
 import { listPublishedCalendarEventsForSitemap } from "@/lib/calendar/public-queries";
 import { listPublishedWikiEntitiesForSitemap } from "@/lib/wiki/public-queries";
+import { defaultLocale, locales } from "@/lib/i18n/config";
+import { localePath } from "@/lib/i18n/paths";
 import { isPublicIndexingEnabled } from "@/lib/seo/indexable";
 
 /** 依赖运行时 `DISABLE_PUBLIC_INDEXING` 等，避免 build 阶段固化进静态 sitemap */
@@ -27,57 +29,66 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/copyright",
   ] as const;
 
-  const staticEntries: MetadataRoute.Sitemap = [
-    {
-      url: `${origin}/`,
-      lastModified: stamp,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${origin}/articles`,
-      lastModified: stamp,
-      changeFrequency: "daily",
-      priority: 0.8,
-    },
-    {
-      url: `${origin}/calendar`,
-      lastModified: stamp,
-      changeFrequency: "weekly",
-      priority: 0.68,
-    },
-    {
-      url: `${origin}/wiki`,
-      lastModified: stamp,
-      changeFrequency: "weekly",
-      priority: 0.69,
-    },
-    ...legalPaths.map((path) => ({
-      url: `${origin}${path}`,
-      lastModified: stamp,
-      changeFrequency: "monthly" as const,
-      priority: 0.45,
-    })),
-  ];
+  const staticEntries: MetadataRoute.Sitemap = [];
+
+  for (const loc of locales) {
+    staticEntries.push(
+      {
+        url: `${origin}${localePath(loc, "/")}`,
+        lastModified: stamp,
+        changeFrequency: "weekly",
+        priority: 0.9,
+      },
+      {
+        url: `${origin}${localePath(loc, "/articles")}`,
+        lastModified: stamp,
+        changeFrequency: "daily",
+        priority: 0.8,
+      },
+      {
+        url: `${origin}${localePath(loc, "/calendar")}`,
+        lastModified: stamp,
+        changeFrequency: "weekly",
+        priority: 0.68,
+      },
+      {
+        url: `${origin}${localePath(loc, "/wiki")}`,
+        lastModified: stamp,
+        changeFrequency: "weekly",
+        priority: 0.69,
+      },
+      ...legalPaths.map((path) => ({
+        url: `${origin}${localePath(loc, path)}`,
+        lastModified: stamp,
+        changeFrequency: "monthly" as const,
+        priority: 0.45,
+      }))
+    );
+  }
 
   try {
-    const rows = await listPublishedArticles();
-
-    const articleUrls: MetadataRoute.Sitemap = rows.map((article) => ({
-      url: `${origin}/articles/${article.slug}`,
-      lastModified:
-        article.updatedAt instanceof Date ?
-          article.updatedAt
-        : new Date(article.updatedAt),
-      changeFrequency: "weekly",
-      priority: 0.6,
-    }));
+    const articleUrls: MetadataRoute.Sitemap = [];
+    for (const loc of locales) {
+      const rows = await listPublishedArticles(loc);
+      for (const article of rows) {
+        articleUrls.push({
+          url: `${origin}${localePath(loc, `/articles/${article.slug}`)}`,
+          lastModified:
+            article.updatedAt instanceof Date ?
+              article.updatedAt
+            : new Date(article.updatedAt),
+          changeFrequency: "weekly",
+          priority: 0.6,
+        });
+      }
+    }
 
     let clusterUrls: MetadataRoute.Sitemap = [];
     try {
       const clusters = await listMergedClusterSlugsForSitemap(200);
+      /** Hub 无独立 locale 行时，仅收录默认语言路径，避免跨语言重复收录 */
       clusterUrls = clusters.map((row) => ({
-        url: `${origin}/clusters/${row.slug}`,
+        url: `${origin}${localePath(defaultLocale, `/clusters/${row.slug}`)}`,
         lastModified:
           row.updatedAt instanceof Date ? row.updatedAt : new Date(row.updatedAt),
         changeFrequency: "daily" as const,
@@ -91,7 +102,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     try {
       const calendarRows = await listPublishedCalendarEventsForSitemap();
       calendarEventUrls = calendarRows.map((row) => ({
-        url: `${origin}/calendar/${row.slug}`,
+        url: `${origin}${localePath(row.locale as (typeof locales)[number], `/calendar/${row.slug}`)}`,
         lastModified:
           row.updatedAt instanceof Date ?
             row.updatedAt
@@ -107,7 +118,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     try {
       const wikiRows = await listPublishedWikiEntitiesForSitemap();
       wikiEntityUrls = wikiRows.map((row) => ({
-        url: `${origin}/wiki/${row.slug}`,
+        url: `${origin}${localePath(row.locale as (typeof locales)[number], `/wiki/${row.slug}`)}`,
         lastModified:
           row.updatedAt instanceof Date ?
             row.updatedAt
@@ -127,7 +138,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ...wikiEntityUrls,
     ];
   } catch {
-    /* 运行时或构建阶段无 DB 等情况：仍能返回站内基础 URL */
     return staticEntries;
   }
 }
