@@ -40,7 +40,8 @@ cp .env.example .env
 
 - `DEPLOYMENT_ENV=production`
 - `NEXT_PUBLIC_SITE_URL=https://你的正式域名`
-- `DATABASE_URL=postgresql://guge:强密码@postgres:5432/guge`
+- `POSTGRES_PASSWORD=强密码`（数据库容器密码）
+- `DATABASE_URL=postgresql://guge:同一个强密码@postgres:5432/guge`（必须与 `POSTGRES_PASSWORD` 一致）
 - `ADMIN_JWT_SECRET`、`USER_JWT_SECRET`（两者必须不同）
 - `ADMIN_PASSWORD_HASH`（bcrypt 哈希）
 - `INGEST_WEBHOOK_SECRET`、`NORMALIZE_WEBHOOK_SECRET`
