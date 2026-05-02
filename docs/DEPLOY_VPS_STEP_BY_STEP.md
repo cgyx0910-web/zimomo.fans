@@ -43,7 +43,7 @@ cp .env.example .env
 - `POSTGRES_PASSWORD=强密码`（数据库容器密码）
 - `DATABASE_URL=postgresql://guge:同一个强密码@postgres:5432/guge`（必须与 `POSTGRES_PASSWORD` 一致）
 - `ADMIN_JWT_SECRET`、`USER_JWT_SECRET`（两者必须不同）
-- `ADMIN_PASSWORD_HASH`（bcrypt 哈希）
+- `ADMIN_PASSWORD_HASH`（bcrypt 哈希）。**经 Docker Compose `env_file` 加载时**：哈希字符串里**每一个** `$` 都要写成 `$$`（否则 `$2b` 等会被当成变量展开，登录永远失败）。生成：`pnpm --filter web run hash-admin-password -- '明文'`（见 `apps/web/package.json`）。
 - `INGEST_WEBHOOK_SECRET`、`NORMALIZE_WEBHOOK_SECRET`
 
 生成随机密钥示例：

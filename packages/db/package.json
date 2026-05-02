@@ -12,7 +12,8 @@
     "migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "studio": "drizzle-kit studio",
-    "ping": "tsx scripts/ping.ts"
+    "ping": "tsx scripts/ping.ts",
+    "ingest-readiness": "tsx scripts/ingest-readiness.ts"
   },
   "dependencies": {
     "dotenv": "^16.4.7",
